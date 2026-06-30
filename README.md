@@ -43,7 +43,7 @@ Or with `uv`:
 uv add raqm-core
 ```
 
-> Requires Python 3.12+.
+> Requires Python 3.9+.
 
 ---
 

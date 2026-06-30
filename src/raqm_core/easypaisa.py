@@ -1,9 +1,11 @@
+from typing import Optional
+
 import httpx
 
 from .headers.easypaisa import generate_auth_header
 from .schemas.easypaisa import (
+    EasyaisaMAResponse,
     EasyPaisaInquireTransactionResponse,
-    EasyPaisaMAResponse,
     EasyPaisaOTCResponse,
 )
 
@@ -15,7 +17,7 @@ class EasyPaisa:
         username: str,
         password: str,
         sandbox: bool,
-        client: httpx.AsyncClient | None = None,
+        client: Optional[httpx.AsyncClient] = None,
     ):
         self.store_id = store_id
         self.username = username
@@ -65,7 +67,7 @@ class EasyPaisa:
             "emailAddress": email,
         }
         data = await self._post("initiate-ma-transaction", request_payload)
-        return EasyPaisaMAResponse(**data)
+        return EasyaisaMAResponse(**data)
 
     async def inquire_transaction_status(self, order_id: str, account_number: str):
         request_payload = {
