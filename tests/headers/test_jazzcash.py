@@ -1,8 +1,6 @@
 from hashlib import sha256
 
-import pytest
-
-from src.headers.jazzcash import generate_secure_hash
+from src.raqm_core.headers.jazzcash import generate_secure_hash
 
 
 def test_generate_secure_hash_pass_standard():

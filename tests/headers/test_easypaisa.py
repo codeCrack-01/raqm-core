@@ -1,6 +1,4 @@
-import pytest
-
-from src.headers.easypaisa import generate_auth_header
+from src.raqm_core.headers.easypaisa import generate_auth_header
 
 
 def test_auth_header_success():

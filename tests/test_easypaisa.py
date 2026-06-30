@@ -1,8 +1,7 @@
 import httpx
 import pytest
 
-from src.easypaisa import EasyPaisa
-
+from src.raqm_core.easypaisa import EasyPaisa
 
 MA_SUCCESS_BODY = {
     "orderId": "abc123",
