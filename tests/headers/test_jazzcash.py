@@ -15,8 +15,15 @@ def test_generate_secure_hash_pass_empty_params():
     hash_key = "secret_key"
     params = {}
 
-    expected_hash = sha256(b"secret_key&").hexdigest()
+    expected_hash = sha256(b"secret_key").hexdigest()
     assert generate_secure_hash(hash_key, params) == expected_hash
+
+
+def test_generate_secure_hash_skips_empty_values():
+    hash_key = "secret_key"
+    params = {"a_param": "value1", "b_param": "", "c_param": "value3"}
+    expected = sha256(b"secret_key&value1&value3").hexdigest()
+    assert generate_secure_hash(hash_key, params) == expected
 
 
 def test_generate_secure_hash_fail_includes_keys():
