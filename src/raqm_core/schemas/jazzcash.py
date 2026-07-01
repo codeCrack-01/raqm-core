@@ -14,61 +14,70 @@ class JazzCashResponseCode(str, Enum):
     SYSTEM_ERROR = "199"
     TRANSACTION_TIMED_OUT = "403"
     INSUFFICIENT_BALANCE = "405"
-    # Will add more if necessary, the docs are vague though...
 
 
-class JazzcashOTCResponse(BaseModel):
-    pp_Amount: str = Field(
-        ...,
-        description="The transaction amount. Please note that no decimal places are included. Decimal place will be assumed at the default position of the currency provided.",
-    )
-    pp_AuthCode: str = Field(..., description="Authorization code for the transaction.")
-    pp_BankID: str = Field(..., description="Bank identifier for the transaction.")
-    pp_BillReference: str = Field(..., description="Bill/invoice Number being settled.")
-    pp_Language: str = Field(
-        ...,
-        description="Specifies the language in which to display the page. Fixed value 'EN'.",
-    )
+# ── REQUEST MODELS ────────────────────────────────────────────────────────────
+
+
+class JazzcashRequest(BaseModel):
+    pp_Version: str = Field("1.1", description="Payment Portal Version.")
+    pp_Language: str = Field("EN", description="Display language. Fixed value 'EN'.")
     pp_MerchantID: str = Field(
-        ..., description="Unique Id assigned to each merchant by the payment gateway."
+        ..., description="Unique merchant ID assigned by JazzCash."
     )
-    pp_ResponseCode: str = Field(
-        ...,
-        min_length=3,
-        max_length=3,
-        description="Response code indicating transaction status.",
+    pp_SubMerchantID: str = Field(
+        "", description="Sub merchant ID, leave empty if unused."
     )
-    pp_ResponseMessage: str = Field(
-        ..., min_length=3, description="Response message describing transaction status."
+    pp_Password: str = Field(..., description="Password assigned by JazzCash.")
+    pp_BankID: str = Field("", description="Bank identifier, leave empty if unused.")
+    pp_ProductID: str = Field(
+        "", description="Product identifier, leave empty if unused."
     )
-    pp_RetreivalReferenceNo: str = Field(
-        ..., description="Retrieval reference number for the transaction."
-    )
-    pp_SubMerchantId: str = Field(
-        ...,
-        description="Unique Id assigned to each sub merchant by the payment gateway.",
-    )
+    pp_TxnRefNo: str = Field(..., description="Unique transaction reference number.")
+    pp_Amount: str = Field(..., description="Transaction amount, no decimal places.")
     pp_TxnCurrency: str = Field(
-        ..., description="Currency of transaction amount. It has a fixed value 'PKR'."
+        "PKR", description="Transaction currency. Fixed value 'PKR'."
     )
     pp_TxnDateTime: str = Field(
-        ...,
-        description="Merchant provided date and time of transaction. The format of date time should be yyyyMMddHHmmss.",
+        ..., description="Transaction datetime. Format: yyyyMMddHHmmss."
     )
-    pp_TxnRefNo: str = Field(
-        ...,
-        description="A unique value created by the merchant to identify the transaction.",
+    pp_BillReference: str = Field(..., description="Bill/invoice number being settled.")
+    pp_Description: str = Field(..., description="Transaction description.")
+    pp_TxnExpiryDateTime: str = Field(
+        ..., description="Expiry datetime. Format: yyyyMMddHHmmss."
     )
-    pp_SettlementExpiry: str = Field(
-        ..., description="Settlement expiry date for the transaction."
-    )
-    pp_TxnType: str = Field(
-        ..., description="Type of instrument used for making payment."
-    )
-    pp_Version: str = Field(
-        ...,
-        description="Payment Portal Version. Refer to JazzCash API docs for details",
-    )
+    ppmpf_1: str = ""
+    ppmpf_2: str = ""
+    ppmpf_3: str = ""
+    ppmpf_4: str = ""
+    ppmpf_5: str = ""
+
+
+class JazzcashMWalletRequest(JazzcashRequest):
+    pp_TxnType: str = Field("MWALLET", description="Transaction type.")
+    pp_MobileNumber: str = Field(..., description="Customer's JazzCash mobile number.")
+
+
+# ── RESPONSE MODELS ───────────────────────────────────────────────────────────
+
+
+class JazzcashResponse(BaseModel):
+    pp_Amount: str = Field(..., description="Transaction amount.")
+    pp_AuthCode: Optional[str] = None
+    pp_BankID: Optional[str] = None
+    pp_BillReference: Optional[str] = None
+    pp_Language: Optional[str] = None
+    pp_MerchantID: str = Field(..., description="Merchant ID.")
+    pp_ResponseCode: str = Field(..., description="Response code.")
+    pp_ResponseMessage: str = Field(..., description="Response message.")
+    pp_RetreivalReferenceNo: Optional[str] = None
+    pp_SubMerchantId: Optional[str] = None
+    pp_TxnCurrency: Optional[str] = None
+    pp_TxnDateTime: Optional[str] = None
+    pp_TxnRefNo: str = Field(..., description="Transaction reference number.")
+    pp_SettlementExpiry: Optional[str] = None
+    pp_TxnType: Optional[str] = None
+    pp_Version: Optional[str] = None
     ppmbf_1: Optional[str] = None
     ppmbf_2: Optional[str] = None
     ppmbf_3: Optional[str] = None
@@ -79,7 +88,4 @@ class JazzcashOTCResponse(BaseModel):
     ppmpf_3: Optional[str] = None
     ppmpf_4: Optional[str] = None
     ppmpf_5: Optional[str] = None
-    pp_SecureHash: str = Field(
-        ...,
-        description="Used to allow the Payment Gateway to check the integrity of the transaction request.",
-    )
+    pp_SecureHash: Optional[str] = None
